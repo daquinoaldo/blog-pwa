@@ -1,0 +1,89 @@
+/* MAIN */
+
+@font-face {
+  font-family: system;
+  font-style: normal;
+  font-weight: 300;
+  src: local(".SFNSText-Light"), local(".HelveticaNeueDeskInterface-Light"),
+  local(".LucidaGrandeUI"), local("Ubuntu Light"), local("Segoe UI Light"),
+  local("Roboto-Light"), local("DroidSans"), local("Tahoma");
+}
+
+body {
+  font-family: "system", sans-serif;
+  font-size: 1rem;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: auto;
+  -webkit-text-size-adjust: 100%;
+  padding: 0;
+  margin: 0;
+  scroll-behavior: smooth;
+}
+
+nav {
+  text-align: center;
+  position: fixed;
+  width: 100%;
+  height: 3.5em;
+}
+
+nav ul {
+  margin: 0;
+  padding: 0;
+}
+
+nav li {
+  display: inline-block;
+  list-style: none;
+}
+
+nav a {
+  color: inherit;
+  text-decoration: none;
+}
+
+#container {
+  width: 100vw;
+  height: calc(100vh - 3.5em);
+}
+
+/* smartphone and portrait tablet */
+@media (max-width:960px)  {
+  nav {
+    bottom: 0;
+    border-top: 1px solid #ececec;
+  }
+
+  nav li {
+    padding: .5em;
+    width: calc(19% - 1em);
+  }
+
+  nav img, nav span {
+    display: block;
+    margin: auto;
+    font-size: x-small;
+  }
+}
+
+/* landscape tablet and desktop */
+@media (min-width:961px)  {
+  nav {
+    top: 0;
+    border-bottom: 1px solid #ececec;
+  }
+
+  nav li {
+    padding: 1em;
+    width: calc(19% - 2em);
+  }
+
+  nav img {
+    height: 1em;
+  }
+
+  #container {
+    position: fixed;
+    top: 3.5em;
+  }
+}
