@@ -1,12 +1,9 @@
-const API_URL = "https://your-wp-website.com/wp-json/wp/v2/"
-
 /**
  * Make an HTTP GET request asynchronously.
- * @param url         The url of the request.
- * @param callback    Callback to be called.
- * @param retry       How many retries do in case of error (default = 1).
- * @param parseJSON   True for parse the JSON response (default = true).
- * @return The result of the get request.
+ * @param url        Url of the request.
+ * @param parseJSON  True for parse the JSON response (default = true).
+ * @param retry      How many retries do in case of error (default = 1).
+ * @returns {Promise<String>} Promise resolved with the result of the get request.
  */
 function httpGetAsync(url, parseJSON = true, retry = 1) {
   console.log(url)
@@ -45,22 +42,24 @@ const wp = {
 
 /**
  * Given a post or a category, strips out the unwanted fields.
- * @param item    The post or the category object.
- * @param fields  The wanted fields, that will be kept.
- * @return The filtered item.
+ * @param item    Post or the category object.
+ * @param fields  Wanted fields, that will be kept.
+ * @returns {Object} Filtered item.
  */
 wp.filter = function(item, fields) {
   if (!fields) return item  // if null not filter
   for (let field in item)
     if (fields.indexOf(field) < 0) delete item[field]
+    else if (item[field].hasOwnProperty("rendered"))
+      item[field] = item[field].rendered
   return item
 }
 
 /**
  * Given a list of posts or categories, strips out the unwanted fields from each item.
- * @param item    The posts or the categories array.
- * @param fields  The wanted fields, that will be kept.
- * @return The list of filtered item.
+ * @param item    Posts or the categories array.
+ * @param fields  Wanted fields, that will be kept.
+ * @returns {Array<Object>} List of filtered item.
  */
 wp.filterAll = function(items, fields) {
   if (!fields) return items
@@ -72,11 +71,11 @@ wp.filterAll = function(items, fields) {
 }
 
 /**
- * Get the posts list.
- * @param category    The category of which retrieve posts. If null all posts from all categories are retrieved.
- * @param postNumber  The number of posts to get.
- * @param postFields  An array of fields that we want in the posts. For all the fields use wp.POST_FIELDS_ALL.
- * @return A promise resolved with the list of all posts.
+ * Get posts list.
+ * @param category    Id category of which retrieve posts. If null all posts from all categories are retrieved.
+ * @param postNumber  Number of posts to get.
+ * @param postFields  Array of fields that we want in the posts. For all the fields use wp.POST_FIELDS_ALL.
+ * @returns {Promise<Array<Object>>} Promise resolved with the list of all posts.
  */
 wp.getPosts = function(category = null, postsNumber = -1, postFields = wp.POST_FIELDS_DEFAULT) {
   return new Promise(async resolve => {
@@ -108,16 +107,23 @@ wp.getPosts = function(category = null, postsNumber = -1, postFields = wp.POST_F
 
 /**
  * Get post by slug.
- * @param slug        The post slug.
- * @param postFields  An array of fields that we want in the posts. For all the fields use wp.POST_FIELDS_ALL.
- * @return A promise resolved with the post.
+ * @param slug        Post slug.
+ * @param postFields  Array of fields that we want in the posts.
+ *                    For all the fields use wp.POST_FIELDS_ALL.
+ * @returns {Promise<Object>} Promise resolved with the post.
  */
 wp.getPost = function(slug, postFields = wp.POST_FIELDS_DEFAULT) {
-  return new Promise(resolve => httpGetAsync(API_URL + "posts?slug=" + slug)
-      .then(post => resolve(wp.filter(post[0], postFields))))
+  return httpGetAsync(API_URL + "posts?slug=" + slug)
+      .then(post => wp.filter(post[0], postFields))
 }
 
+/**
+ * Get category list.
+ * @param categoryFields  Array of fields that we want in the categories.
+ *                        For all the fields use wp.CATEGORY_FIELDS_ALL.
+ * @returns {Promise<Array<Object>>} Promise resolved with the categories list.
+ */
 wp.getCategories = function(categoryFields = wp.CATEGORY_FIELDS_DEFAULT) {
-  return new Promise(resolve => httpGetAsync(API_URL + "categories")
-    .then(categories => resolve(wp.filterAll(categories, categoryFields))))
+  return httpGetAsync(API_URL + "categories")
+    .then(categories => wp.filterAll(categories, categoryFields))
 }
