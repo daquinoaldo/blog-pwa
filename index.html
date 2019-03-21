@@ -25,31 +25,31 @@
     <nav>
       <ul>
         <li>
-          <a class="internal_link" href="/">
+          <a class="internal" href="/">
             <img alt="home" src="/images/home.svg">
             <span>Home</span>
           </a>
         </li>
         <li>
-          <a class="internal_link" href="/category">
+          <a class="internal" href="/categories">
             <img alt="category" src="/images/category.svg">
             <span>Categories</span>
           </a>
         </li>
         <li>
-          <a class="internal_link" href="/search">
+          <a class="internal" href="/search">
             <img alt="search" src="/images/search.svg">
             <span>Search</span>
           </a>
         </li>
         <li>
-          <a class="internal_link" href="/favorite">
+          <a class="internal" href="/favorites">
             <img alt="favorite" src="/images/favorite.svg">
             <span>Favorites</span>
           </a>
         </li>
         <li>
-          <a class="internal_link" href="/more">
+          <a class="internal" href="/more">
             <img alt="more" src="/images/more.svg">
             <span>More</span>
           </a>
@@ -65,6 +65,10 @@
     </div>
 
   <!-- JS files  -->
-  <script async src="/js/install-sw.js"></script>
+  <script>const API_URL = "https://your-website.com/wp-json/wp/v2/";</script>
+  <script async src="/js/wordpress.js"></script>
+  <script async src="/js/content-provider.js"></script>
+  <script async src="/js/navigator.js"></script>
+  <!--<script async src="/js/install-sw.js"></script>-->
   </body>
 </html>

@@ -7,13 +7,17 @@
  */
 function httpGetAsync(url, parseJSON = true, retry = 1) {
   console.log(url)
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     // inner function for recursion
     function httpGet(url, retry, parseJSON) {
       const xmlHttp = new XMLHttpRequest()
       xmlHttp.onreadystatechange = function() {
         if (xmlHttp.readyState === 4 && xmlHttp.status === 200)
-          resolve(parseJSON ? JSON.parse(xmlHttp.responseText) : xmlHttp)
+          try {
+            resolve(parseJSON ? JSON.parse(xmlHttp.responseText) : xmlHttp)
+          } catch (e) {
+            reject("offline")
+          }
       }
       xmlHttp.onerror = function() {
         if (retry) {
@@ -95,7 +99,7 @@ wp.getPosts = function(category = null, postsNumber = -1, postFields = wp.POST_F
       // prepare the url
       perPage = page == pages ? postInLastPage : wp.MAX_POST_PER_PAGE
       let url = API_URL + "posts/?per_page=" + perPage + "&page=" + page
-      if (category) url += "&category_name=" + category
+      if (category) url += "&categories=" + category
       // queue the job
       promises.push(httpGetAsync(url)
         .then(posts => allPosts.push(...wp.filterAll(posts, postFields))))
