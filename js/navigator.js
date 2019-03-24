@@ -1,21 +1,32 @@
 const nav = {
-  container: document.getElementById("container")
+  isLoading:false,
+  container: document.getElementById("container"),
+  arrowBack: document.getElementById("arrow-back"),
+  loading: document.getElementById("loading")
 }
 
 /**
- * Replace the container content with one specified.
- * @param content  DOM node with the new content.
- * @param title    Page title.
+ * Empty the container from every content.
  */
-nav.updatePage = function(content, title, scrollTop = 0) {
+nav.emptyContent = function() {
   // remove all children
   while (nav.container.firstChild)
   nav.container.removeChild(nav.container.firstChild)
+}
+
+/**
+ * Set the specified content inside the container.
+ * @param content  DOM node with the new content.
+ * @param title    Page title.
+ */
+nav.setContent = function(content, title, scrollTop = 0) {
   // append the new one
   if (title) document.title = title
   nav.container.appendChild(content)
   window.scrollTo(0, scrollTop)
   nav.setupInternal()
+  nav.hide(nav.loading)  // page ready, hide the loading panel
+  nav.isLoading = false
 }
 
 /**
@@ -28,15 +39,21 @@ nav.setupInternal = function() {
  let internalLinks = document.getElementsByClassName("internal")
  //const internalLinks = document.getElementsByTagName("a")
  for (let i = 0; i < internalLinks.length; i++)
-  internalLinks[i].addEventListener("click", function (e) {
+  internalLinks[i].onclick = e => {
     e.preventDefault()
     const href = internalLinks[i].getAttribute("href")
     const scrollTop = document.getElementsByTagName("html")[0].scrollTop
     history.replaceState({ scrollTop: scrollTop }, "", window.location.href)
     history.pushState(null, "", href)
     nav.navigate(href)
-  })
+  }
 }
+
+/**
+ * Toogle the back arrow button and the loading spinner.
+ */
+nav.show = elem => elem.style.display = "block"
+nav.hide = elem => elem.style.display = "none"
 
 /**
  * Show the content specified in the URL.
@@ -44,29 +61,35 @@ nav.setupInternal = function() {
  * @param scrollTop  Distance in px from top (used when hit the back arrow)
  */
 nav.navigate = function (url, scrollTop = 0) {
+  if (nav.isLoading) return  // prevent multiple loading of the same resource
+  nav.isLoading = true
+  nav.show(nav.loading)  // show the loading panel, will stop in setContent()
+  nav.emptyContent()
+  nav.hide(nav.arrowBack)  // reset the back arrow button
   if (url === "/" || url === "/posts")
-    cp.posts().then(ul => nav.updatePage(ul, "Posts", scrollTop))
+    cp.posts().then(ul => nav.setContent(ul, "Posts", scrollTop))
   else if (url.includes("/posts/")) {
     const slug = url.replace("/posts/", "")
-    cp.post(slug).then(ul => nav.updatePage(ul, slug, scrollTop))
+    cp.post(slug).then(ul => nav.setContent(ul, slug, scrollTop))
+    nav.show(nav.arrowBack)  // show the back arrow button
   }
   else if (url === "/categories")
-    cp.categories().then(ul => nav.updatePage(ul, "Categories", scrollTop))
+    cp.categories().then(ul => nav.setContent(ul, "Categories", scrollTop))
   else if (url.includes("/categories/")) {
     const category = url.replace("/categories/", "")
-    cp.posts(category).then(ul => nav.updatePage(ul, category, scrollTop))
+    cp.posts(category).then(ul => nav.setContent(ul, category, scrollTop))
   }
   else return console.error("loadPage: invalid url " + url)
 }
 
 // Load current page when everything is load (otherwise js will missing)
-document.addEventListener('readystatechange', event => {
-  if (event.target.readyState === "complete") {
+document.addEventListener('readystatechange', e => {
+  if (e.target.readyState === "complete") {
     nav.navigate(window.location.pathname)
   }
 })
 
 // Implement back action on history
 window.onpopstate = e => 
-  nav.navigate(window.location.pathname,
+nav.navigate(window.location.pathname,
     e && e.state ? e.state.scrollTop : null)

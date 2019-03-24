@@ -20,52 +20,65 @@
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="manifest" href="/manifest.json">
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/loading.css">
   </head>
   <body>
     <nav>
+      <section id="arrow-back">
+        <a onclick="history.back()">
+          <img alt="back" src="/images/nav/arrow-back.svg">
+        </a>
+      </section>
+      <section id="brand">
+        <a class="internal" href="/">
+          <img alt="logo" src="/images/logo.svg">
+        </a>
+      </section>
       <ul>
-        <li>
+        <li id="home-button">
           <a class="internal" href="/">
-            <img alt="home" src="/images/home.svg">
+            <img alt="home" src="/images/nav/home.svg">
             <span>Home</span>
           </a>
         </li>
         <li>
           <a class="internal" href="/categories">
-            <img alt="category" src="/images/category.svg">
+            <img alt="category" src="/images/nav/category.svg">
             <span>Categories</span>
           </a>
         </li>
         <li>
           <a class="internal" href="/search">
-            <img alt="search" src="/images/search.svg">
+            <img alt="search" src="/images/nav/search.svg">
             <span>Search</span>
           </a>
         </li>
         <li>
           <a class="internal" href="/favorites">
-            <img alt="favorite" src="/images/favorite.svg">
+            <img alt="favorite" src="/images/nav/favorite.svg">
             <span>Favorites</span>
           </a>
         </li>
         <li>
           <a class="internal" href="/more">
-            <img alt="more" src="/images/more.svg">
+            <img alt="more" src="/images/nav/more.svg">
             <span>More</span>
           </a>
         </li>
       </ul>
     </nav>
 
-    <div id="container">
+    <div id="loading"><div></div><div></div><div></div><div></div></div>
+
+    <main id="container">
       <noscript>
         This site requires JavaScript.
         <a href="https://www.enable-javascript.com/" target="_blank">Here</a> you can find how to enable it in your browser.
       </noscript>
-    </div>
+    </main>
 
   <!-- JS files  -->
-  <script>const API_URL = "https://your-website.com/wp-json/wp/v2/";</script>
+  <script>const API_URL = "https://my-wordpress.com/wp-json/wp/v2/";</script>
   <script async src="/js/wordpress.js"></script>
   <script async src="/js/content-provider.js"></script>
   <script async src="/js/navigator.js"></script>
