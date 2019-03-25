@@ -22,7 +22,7 @@ cp.createListElement = function(link, name) {
  * @returns {Promise<HTMLUListElementul>} List of posts.
  */
 cp.posts = function(category) {
-  return wp.getPosts(category).then(posts => {
+  return wp.getPosts(category, undefined, "title").then(posts => {
     const ul = document.createElement("ul")
     ul.className = "list"
     for (let i = 0; i < posts.length; i++)

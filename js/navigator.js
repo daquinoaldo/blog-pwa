@@ -9,9 +9,13 @@ const nav = {
  * Empty the container from every content.
  */
 nav.emptyContent = function() {
+  // show the loading panel, will stop in setContent()
+  nav.show(nav.loading)
   // remove all children
   while (nav.container.firstChild)
   nav.container.removeChild(nav.container.firstChild)
+  // reset the back arrow button
+  nav.hide(nav.arrowBack)
 }
 
 /**
@@ -63,9 +67,7 @@ nav.hide = elem => elem.style.display = "none"
 nav.navigate = function (url, scrollTop = 0) {
   if (nav.isLoading) return  // prevent multiple loading of the same resource
   nav.isLoading = true
-  nav.show(nav.loading)  // show the loading panel, will stop in setContent()
   nav.emptyContent()
-  nav.hide(nav.arrowBack)  // reset the back arrow button
   if (url === "/" || url === "/posts")
     cp.posts().then(ul => nav.setContent(ul, "Posts", scrollTop))
   else if (url.includes("/posts/")) {
@@ -78,6 +80,10 @@ nav.navigate = function (url, scrollTop = 0) {
   else if (url.includes("/categories/")) {
     const category = url.replace("/categories/", "")
     cp.posts(category).then(ul => nav.setContent(ul, category, scrollTop))
+  }
+  else if (url === "/search") {
+    nav.setContent(search.getContent(), "Search", scrollTop)
+    search.input.focus()
   }
   else return console.error("loadPage: invalid url " + url)
 }

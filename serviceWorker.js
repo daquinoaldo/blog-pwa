@@ -9,6 +9,7 @@ const files = [
   "/js/content-provider.js",
   "/js/install-sw.js",
   "/js/navigator.js",
+  "js/search.js",
   "/js/wordpress.js",
   "/images/icons/android-192x192.png",
   "/images/icons/android-512x512.png",
