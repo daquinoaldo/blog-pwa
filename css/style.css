@@ -77,6 +77,19 @@ nav a {
   margin: 1em;
 }
 
+#search {
+  margin: 1em;
+  padding: .5em;
+  font-size: 1em;
+  border-radius: 3px;
+  border: 1px solid #e7e7e7;
+  width: calc(calc(100% - 3em) - 2px);
+}
+
+#search:focus {
+  outline: none;
+}
+
 /* Non-touch devices only */
 @media (hover: hover) {
   .list li a:hover {
