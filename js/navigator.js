@@ -91,6 +91,8 @@ nav.navigate = function (url, scrollTop = 0) {
     nav.setContent(search.getContent(), "Search", scrollTop)
     search.input.focus()
   }
+  else if (url === "/more")
+    nav.setContent(cp.more(), "More", scrollTop)
   else return console.error("loadPage: invalid url " + url)
 }
 

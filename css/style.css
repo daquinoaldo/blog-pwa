@@ -20,8 +20,12 @@ body {
   scroll-behavior: smooth;
 }
 
-img {
-  max-width: 100%;
+h1, h2 {
+  font-weight: 100;
+}
+
+a {
+  color: inherit;
 }
 
 .internal, nav {
@@ -180,6 +184,7 @@ nav a {
 
   #container {
     margin-top: 3.5em;
+    padding: 1em;
   }
 
 }
