@@ -19,10 +19,11 @@ cp.createListElement = function(link, name) {
 /**
  * Prepare a list (ul) with all the posts.
  * @param category  Category of the posts. If null, all the categories.
+ * @param tag       Tag of the posts. If null, all the tags.
  * @returns {Promise<HTMLUListElementul>} List of posts.
  */
-cp.posts = function(category) {
-  return wp.getPosts(category, undefined, "title").then(posts => {
+cp.posts = function(category, tag) {
+  return wp.getPosts(category, tag, undefined, "title").then(posts => {
     const ul = document.createElement("ul")
     ul.className = "list"
     for (let i = 0; i < posts.length; i++)
@@ -41,6 +42,20 @@ cp.categories = function() {
     ul.className = "list"
     for (let i = 0; i < categories.length; i++)
       ul.appendChild(cp.createListElement("/categories/" + categories[i].id, categories[i].name))
+    return ul
+  })
+}
+
+/**
+ * Prepare a list (ul) with all the tags.
+ * @returns {Promise<HTMLUListElementul>} List of tags.
+ */
+cp.tags = function() {
+  return wp.getTags().then(tags => {
+    const ul = document.createElement("ul")
+    ul.className = "list"
+    for (let i = 0; i < tags.length; i++)
+      ul.appendChild(cp.createListElement("/tags/" + tags[i].id, tags[i].name))
     return ul
   })
 }

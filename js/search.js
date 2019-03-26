@@ -18,7 +18,7 @@ search.div.appendChild(search.input)
  */
 search.getContent = function() {
   search.input.value = ""
-  wp.getPosts(undefined, undefined, "title").then(posts => {
+  wp.getPosts(undefined, undefined, undefined, "title").then(posts => {
     search.posts = posts
     search.filter(search.input.value)
   })

@@ -81,6 +81,12 @@ nav.navigate = function (url, scrollTop = 0) {
     const category = url.replace("/categories/", "")
     cp.posts(category).then(ul => nav.setContent(ul, category, scrollTop))
   }
+  else if (url === "/tags")
+    cp.tags().then(ul => nav.setContent(ul, "Tags", scrollTop))
+  else if (url.includes("/tags/")) {
+    const tag = url.replace("/tags/", "")
+    cp.posts(undefined, tag).then(ul => nav.setContent(ul, tag, scrollTop))
+  }
   else if (url === "/search") {
     nav.setContent(search.getContent(), "Search", scrollTop)
     search.input.focus()

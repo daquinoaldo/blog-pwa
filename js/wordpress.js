@@ -38,10 +38,9 @@ function httpGetAsync(url, parseJSON = true, retry = 1) {
  */
 const wp = {
   MAX_POST_PER_PAGE: 100,
-  POST_FIELDS_ALL: null,
+  FIELDS_ALL: null,
   POST_FIELDS_DEFAULT: ["categories", "content", "date", "id", "slug", "tags", "title"],
   POST_ORDERBY_DEFAULT: "date",
-  CATEGORY_FIELDS_ALL: null,
   CATEGORY_FIELDS_DEFAULT: ["count", "description", "id", "name", "parent", "slug"],
   CATEGORY_ORDERBY_DEFAULT: "name"
 }
@@ -93,18 +92,23 @@ wp.filterAll = function(items, fields) {
 
 /**
  * Get posts list.
- * @param category    Id category of which retrieve posts. If null all posts from all categories are retrieved.
+ * @param category    Id of the category of which retrieve posts.
+ *                    If null all posts from all categories are retrieved.
+ * @param tag         Id of the tag of which retrieve posts.
+ *                    If null all posts from all tags are retrieved.
  * @param postNumber  Number of posts to get.
- * @param fields      Array of fields that we want in the posts. For all the fields use wp.POST_FIELDS_ALL.
+ * @param fields      Array of fields that we want in the posts.
+ *                    For all the fields use wp.FIELDS_ALL.
  * @returns {Promise<Array<Object>>} Promise resolved with the list of all posts.
  */
-wp.getPosts = function(category = null, postsNumber = -1,
+wp.getPosts = function(category = null, tag = null, postsNumber = -1,
   orderBy = wp.POST_ORDERBY_DEFAULT, fields = wp.POST_FIELDS_DEFAULT) {
   return new Promise(async resolve => {
     // calculate number of pages and posts in last page
     if (postsNumber === -1) {
       url = API_URL + "posts/?per_page=1"
       if (category) url += "&categories=" + category
+      if (tag) url += "&tags=" + tag
       await httpGetAsync(url, false).then(res => postsNumber = res.getResponseHeader("x-wp-total"))
     }
     const pages = Math.ceil(postsNumber/wp.MAX_POST_PER_PAGE)
@@ -114,10 +118,11 @@ wp.getPosts = function(category = null, postsNumber = -1,
     // iterate throw the pages
     for (let page = 1; page <= pages; page++) {
       // if only one page, query exactly that amount of posts
-      perPage = pages > 1 ? wp.MAX_POST_PER_PAGE : postInLastPage
+      perPage = pages > 1 ? wp.MAX_POST_PER_PAGE : postsNumber
       // prepare the url
       let url = API_URL + "posts/?per_page=" + perPage + "&page=" + page
       if (category) url += "&categories=" + category
+      if (tag) url += "&tags=" + tag
       // queue the job
       promises.push(httpGetAsync(url)
         .then(posts => allPosts.push(...wp.filterAll(posts, fields))))
@@ -129,20 +134,20 @@ wp.getPosts = function(category = null, postsNumber = -1,
 
 /**
  * Get post by slug.
- * @param slug        Post slug.
- * @param postFields  Array of fields that we want in the posts.
- *                    For all the fields use wp.POST_FIELDS_ALL.
+ * @param slug    Post slug.
+ * @param fields  Array of fields that we want in the posts.
+ *                For all the fields use wp.FIELDS_ALL.
  * @returns {Promise<Object>} Promise resolved with the post.
  */
-wp.getPost = function(slug, postFields = wp.POST_FIELDS_DEFAULT) {
+wp.getPost = function(slug, fields = wp.POST_FIELDS_DEFAULT) {
   return httpGetAsync(API_URL + "posts?slug=" + slug)
-      .then(post => wp.filter(post[0], postFields))
+      .then(post => wp.filter(post[0], fields))
 }
 
 /**
  * Get category list.
- * @param categoryFields  Array of fields that we want in the categories.
- *                        For all the fields use wp.CATEGORY_FIELDS_ALL.
+ * @param fields  Array of fields that we want in the categories.
+ *                For all the fields use wp.FIELDS_ALL.
  * @returns {Promise<Array<Object>>} Promise resolved with the categories list.
  */
 wp.getCategories = function(orderBy = wp.CATEGORY_ORDERBY_DEFAULT, fields = wp.CATEGORY_FIELDS_DEFAULT) {
@@ -150,3 +155,13 @@ wp.getCategories = function(orderBy = wp.CATEGORY_ORDERBY_DEFAULT, fields = wp.C
     .then(categories => wp.order(wp.filterAll(categories, fields), orderBy))
 }
 
+/**
+ * Get tags list.
+ * @param fields  Array of fields that we want in the tags.
+ *                For all the fields use wp.FIELDS_ALL.
+ * @returns {Promise<Array<Object>>} Promise resolved with the tags list.
+ */
+wp.getTags = function(orderBy = wp.CATEGORY_ORDERBY_DEFAULT, fields = wp.FIELDS_ALL) {
+  return httpGetAsync(API_URL + "tags")
+    .then(tags => wp.order(wp.filterAll(tags, fields), orderBy))
+}
