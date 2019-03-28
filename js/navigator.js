@@ -21,11 +21,8 @@ nav.emptyContent = function() {
 /**
  * Set the specified content inside the container.
  * @param content  DOM node with the new content.
- * @param title    Page title.
  */
-nav.setContent = function(content, title, scrollTop = 0) {
-  // append the new one
-  if (title) document.title = title
+nav.setContent = function(content, scrollTop = 0) {
   nav.container.appendChild(content)
   window.scrollTo(0, scrollTop)
   nav.setupInternal()
@@ -45,11 +42,14 @@ nav.setupInternal = function() {
  for (let i = 0; i < internalLinks.length; i++)
   internalLinks[i].onclick = e => {
     e.preventDefault()
+    const title = internalLinks[i].textContent
     const href = internalLinks[i].getAttribute("href")
     const scrollTop = document.getElementsByTagName("html")[0].scrollTop
-    history.replaceState({ scrollTop: scrollTop }, "", window.location.href)
+    const pageTitle = document.title
+    const state = { scrollTop: scrollTop, title: pageTitle }
+    history.replaceState(state, "", window.location.href)
     history.pushState(null, "", href)
-    nav.navigate(href)
+    nav.navigate(href, title)
   }
 }
 
@@ -64,46 +64,54 @@ nav.hide = elem => elem.style.display = "none"
  * @param url        URL of the content.
  * @param scrollTop  Distance in px from top (used when hit the back arrow)
  */
-nav.navigate = function (url, scrollTop = 0) {
-  if (nav.isLoading) return  // prevent multiple loading of the same resource
+nav.navigate = function (url, title, scrollTop = 0) {
+  // prevent multiple loading of the same resource
+  if (nav.isLoading) return
   nav.isLoading = true
+  // set page title
+  document.title = (title || "") + (title && nav.siteTitle ? " | " : "") + nav.siteTitle
+  // empty the page, then load and set the new content
   nav.emptyContent()
   if (url === "/" || url === "/posts")
-    cp.posts().then(ul => nav.setContent(ul, "Posts", scrollTop))
+    cp.posts().then(content => nav.setContent(content, scrollTop))
   else if (url.includes("/posts/")) {
     const slug = url.replace("/posts/", "")
-    cp.post(slug).then(ul => nav.setContent(ul, slug, scrollTop))
+    cp.post(slug).then(content => nav.setContent(content, slug, scrollTop))
     nav.show(nav.arrowBack)  // show the back arrow button
   }
   else if (url === "/categories")
-    cp.categories().then(ul => nav.setContent(ul, "Categories", scrollTop))
+    cp.categories().then(content => nav.setContent(content, scrollTop))
   else if (url.includes("/categories/")) {
     const category = url.replace("/categories/", "")
-    cp.posts(category).then(ul => nav.setContent(ul, category, scrollTop))
+    cp.posts(category).then(content => nav.setContent(content, scrollTop))
   }
   else if (url === "/tags")
-    cp.tags().then(ul => nav.setContent(ul, "Tags", scrollTop))
+    cp.tags().then(content => nav.setContent(content, scrollTop))
   else if (url.includes("/tags/")) {
     const tag = url.replace("/tags/", "")
-    cp.posts(undefined, tag).then(ul => nav.setContent(ul, tag, scrollTop))
+    cp.posts(undefined, tag).then(content => nav.setContent(content, scrollTop))
   }
   else if (url === "/search") {
-    nav.setContent(search.getContent(), "Search", scrollTop)
+    nav.setContent(search.getContent(), scrollTop)
     search.input.focus()
   }
   else if (url === "/more")
-    nav.setContent(cp.more(), "More", scrollTop)
+    nav.setContent(cp.more(), scrollTop)
   else return console.error("loadPage: invalid url " + url)
 }
 
 // Load current page when everything is load (otherwise js will missing)
 document.addEventListener('readystatechange', e => {
   if (e.target.readyState === "complete") {
+    nav.siteTitle = document.title
     nav.navigate(window.location.pathname)
   }
 })
 
 // Implement back action on history
 window.onpopstate = e => 
-nav.navigate(window.location.pathname,
-    e && e.state ? e.state.scrollTop : null)
+nav.navigate(
+  window.location.pathname,
+  e && e.state ? e.state.title : null,
+  e && e.state ? e.state.scrollTop : null
+)

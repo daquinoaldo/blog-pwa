@@ -6,7 +6,6 @@
  * @returns {Promise<String>} Promise resolved with the result of the get request.
  */
 function httpGetAsync(url, parseJSON = true, retry = 1) {
-  console.log(url)
   return new Promise((resolve, reject) => {
     // inner function for recursion
     function httpGet(url, retry, parseJSON) {
