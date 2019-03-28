@@ -1,28 +1,30 @@
 // files to be cached
 const files = [
   "/",
-  "/manifest.json",
-  "/index.html",
-  "/favicon.ico",
   "/css/loading.css",
   "/css/style.css",
-  "/js/content-provider.js",
-  "/js/install-sw.js",
-  "/js/navigator.js",
-  "js/search.js",
-  "/js/wordpress.js",
   "/images/icons/android-192x192.png",
   "/images/icons/android-512x512.png",
   "/images/icons/apple-touch-icon.png",
   "/images/icons/favicon-16x16.png",
   "/images/icons/favicon-32x32.png",
   "/images/icons/msapplication-tile.png",
-  "/images/category.svg",
-  "/images/favorite.svg",
-  "/images/home.svg",
-  "/images/more.svg",
-  "/images/search.svg"
-];
+  "/images/nav/arrow-back.svg",
+  "/images/nav/categories.svg",
+  "/images/nav/home.svg",
+  "/images/nav/more.svg",
+  "/images/nav/search.svg",
+  "/images/nav/tags.svg",
+  "/images/logo.svg",
+  "/js/content-provider.js",
+  "/js/install-sw.js",
+  "/js/navigator.js",
+  "/js/search.js",
+  "/js/wordpress.js",
+  "/favicon.ico",
+  "/index.html",
+  "/manifest.json"
+]
 
 const cacheName = "v0.1.0-alpha"
 
@@ -62,20 +64,33 @@ self.addEventListener("activate", function(event) {
   )
 })
 
-// listen for fetch event and serve the cache if required
-self.addEventListener("fetch", function(event) {
-  event.respondWith(caches.match(event.request).then(function(response) {
-    // caches.match() always resolves but in case of success response will have value
-    if (response !== undefined)
-      return response
-    else {
-      return fetch(event.request).then(function (response) {
-        console.log("Resource not found in cache, loaded from web: " + event.request.url)
-        return response
-      }).catch(function () {
-        console.warn("Resource not found in cache nor online, using home: " + event.request.url)
-        return caches.match("/")
-      })
-    }
-  }))
+// listen for fetch event and serve the cache
+self.addEventListener('fetch', function(event) {
+  event.respondWith(caches.match(event.request)
+    .then(function(response) {
+      // Cache hit - return response
+      if (response) return response
+      // Not in cache, fetch for Internet and cache it
+      return fetch(event.request)
+        .then(function(response) {
+          // Check if we received a valid response, in that case we will cache it
+          if (response && response.status === 200) {
+            // IMPORTANT: Clone the response. A response is a stream
+            // and because we want the browser to consume the response
+            // as well as the cache consuming the response, we need
+            // to clone it so we have two streams.
+            var responseToCache = response.clone()
+            caches.open(cacheName)
+              .then(cache => cache.put(event.request, responseToCache))
+            console.log("Cached: " + event.request.url)
+          }
+          // In any case return the response
+          return response
+        })
+    })
+    .catch(function () {
+      console.warn("Resource not found in cache nor online, using home: " + event.request.url)
+      return caches.match("/")
+    })
+  )
 })
