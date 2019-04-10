@@ -1,0 +1,17 @@
+# Redirect all 404 to home page. Javascript will handle the path.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
+
+# Don't cache the pages: serviceWorker will do that for us, but we want it refreshes any time we need.
+<ifModule mod_headers.c>
+  Header unset ETag
+  Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
+  Header set Pragma "no-cache"
+  Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
+</ifModule>
