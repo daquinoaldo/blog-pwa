@@ -27,7 +27,7 @@ search.getContent = function() {
 
 /**
  * Set the list of items that matches the query.
- * @param ul List of item to be setted as content.
+ * @param ul List of item to be set as content.
  */
 search.setList = function(ul) {
   if (search.ul)
@@ -37,7 +37,7 @@ search.setList = function(ul) {
 }
 
 search.setList = function(posts) {
-  // preparenew list
+  // prepare new list
   const ul = document.createElement("ul")
   ul.className = "list"
   for (let i = 0; i < posts.length; i++)
