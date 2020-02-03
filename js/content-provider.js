@@ -27,7 +27,7 @@ cp.posts = function(category, tag) {
     const ul = document.createElement("ul")
     ul.className = "list"
     for (let i = 0; i < posts.length; i++)
-      ul.appendChild(cp.createListElement("/posts/" + posts[i].slug, posts[i].title))
+      ul.appendChild(cp.createListElement("/" + posts[i].slug, posts[i].title))
     return ul
   })
 }

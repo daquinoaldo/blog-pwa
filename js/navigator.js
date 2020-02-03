@@ -72,13 +72,8 @@ nav.navigate = function (url, title, scrollTop = 0) {
   document.title = (title || "") + (title && nav.siteTitle ? " | " : "") + nav.siteTitle
   // empty the page, then load and set the new content
   nav.emptyContent()
-  if (url === "/" || url === "/posts")
+  if (url === "/")
     cp.posts().then(content => nav.setContent(content, scrollTop))
-  else if (url.includes("/posts/")) {
-    const slug = url.replace("/posts/", "")
-    cp.post(slug).then(content => nav.setContent(content, slug, scrollTop))
-    nav.show(nav.arrowBack)  // show the back arrow button
-  }
   else if (url === "/categories")
     cp.categories().then(content => nav.setContent(content, scrollTop))
   else if (url.includes("/categories/")) {
@@ -97,7 +92,11 @@ nav.navigate = function (url, title, scrollTop = 0) {
   }
   else if (url === "/more")
     nav.setContent(cp.more(), scrollTop)
-  else return console.error("loadPage: invalid url " + url)
+  else { // it's a post
+    const slug = url
+    cp.post(slug).then(content => nav.setContent(content, slug, scrollTop))
+    nav.show(nav.arrowBack)  // show the back arrow button
+  }
 }
 
 // Load current page when everything is load (otherwise js will missing)
