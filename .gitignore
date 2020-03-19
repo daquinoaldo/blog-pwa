@@ -8,4 +8,5 @@
 # Node.js
 node_modules
 
-test
+# docker volumes for test
+volumes
