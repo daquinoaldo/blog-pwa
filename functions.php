@@ -1,20 +1,23 @@
 <?php
 
 /* == CONFIGS & GETTERS ========== */
-function get_default_icon_url($filename = "") { //TODO: tasto reset
-  return get_template_directory_uri() . "/images/icons/" . $filename;
+function get_default_image_url($filename = "") {
+  return get_template_directory_uri() . "/images/" . $filename;
 }
-function get_default_icon_path($filename = "") {
-  return get_template_directory() . "/images/icons/" . $filename;
+function get_default_image_path($filename = "") {
+  return get_template_directory() . "/images/" . $filename;
 }
-function get_custom_icon_url($filename = "") {
-  return "/wp-content/uploads/blog-pwa/" . $filename;
+function get_custom_image_url($filename = "") {
+  return "/wp-content/uploads/blog-pwa/images/" . $filename;
 }
-function get_custom_icon_path($filename = "") {
-  return $_SERVER["DOCUMENT_ROOT"] . get_custom_icon_url($filename);
+function get_custom_image_path($filename = "") {
+  return $_SERVER["DOCUMENT_ROOT"] . get_custom_image_url($filename);
 }
 function get_icon_url($filename = "") {
-  return get_option("application_icon_path", get_custom_icon_url()) . $filename;
+  return get_option("application_icon_path", get_default_image_url("icons/")) . $filename;
+}
+function get_logo_url() {
+  return get_option("application_logo_path", get_default_image_url("logo.png"));
 }
 function get_colored_header() {
   return get_option("colored_header", "#0288d1");
@@ -76,41 +79,76 @@ function display_application_icon_setting() {
   <?php
 }
 
+function display_application_logo_setting() {
+  ?>
+    <img width="180" src="<?php echo get_logo_url() ?>">
+    <br><br>
+    <input type="file" name="application_logo" id="application_logo" />
+    <input type="checkbox" name="reset_application_logo" id="reset_application_logo" />Reset to default logo
+  <?php
+}
+
+/* handler functions */
 function application_icon_upload_handler($options) {
   $input_file = $_FILES["application_icon"]["tmp_name"];
+  $output_dir = get_custom_image_path("icons/");
 
   // reset option selected, return the default url
   if ($_POST["reset_application_icon"])
-    return get_default_icon_url();
+    return get_default_image_url("icons/");
 
   // no upload, return the old file url
   if (empty($input_file))
-    return get_option("application_icon_path");
+    return get_icon_url();
   
   // not an image, return the old file url
   $mime = getimagesize($input_file)["mime"];
   if ($mime != "image/jpeg" && $mime != "image/jpg" && $mime != "image/png") {
     add_settings_error("application_icon_path", 1, "Invalid mime type.");
-    return get_option("application_icon_path");
+    return get_icon_url();
   }
 
   // prepare images and return the new url
-  $original = $input_file;
-  $android_mask = get_default_icon_path("android-mask.png");
-  $iphone_mask = get_default_icon_path("iphone-mask.png");
-  $android = get_custom_icon_path("android-512x512.png");
-  $iphone = get_custom_icon_path("apple-touch-icon.png");
-  crop($original, $android_mask, $android);
-  crop($original, $iphone_mask, $iphone);
-  resize($android,  512, 512, get_custom_icon_path("android-512x512.png"));
-  resize($android,  192, 192, get_custom_icon_path("android-192x192.png"));
-  resize($iphone,   180, 180, get_custom_icon_path("apple-touch-icon.png"));
-  resize($original, 270, 270, get_custom_icon_path("msapplication-tile.png"));
-  resize($original, 64,  64,  get_custom_icon_path("favicon-64x64.png"));
-  resize($original, 48,  48,  get_custom_icon_path("favicon-48x48.png"));
-  resize($original, 32,  32,  get_custom_icon_path("favicon-32x32.png"));
-  resize($original, 16,  16,  get_custom_icon_path("favicon-16x16.png"));
-  return get_custom_icon_url();
+  $android_mask = get_default_image_path("icons/android-mask.png");
+  $iphone_mask = get_default_image_path("icons/iphone-mask.png");
+  $android = get_custom_image_path("android-512x512.png");
+  $iphone = get_custom_image_path("apple-touch-icon.png");
+  crop($input_file, $android_mask, $android);
+  crop($input_file, $iphone_mask,  $iphone);
+  resize($android, 512, 512, $output_dir."android-512x512.png");
+  resize($android, 192, 192, $output_dir."android-192x192.png");
+  resize($iphone, 180, 180, $output_dir."apple-touch-icon.png");
+  resize($input_file, 270, 270, $output_dir."msapplication-tile.png");
+  resize($input_file,  64,  64, $output_dir."favicon-64x64.png");
+  resize($input_file,  48,  48, $output_dir."favicon-48x48.png");
+  resize($input_file,  32,  32, $output_dir."favicon-32x32.png");
+  resize($input_file,  16,  16, $output_dir."favicon-16x16.png");
+  return get_custom_image_url("icons/");
+}
+
+function application_logo_upload_handler($options) {
+  $input_file = $_FILES["application_logo"]["tmp_name"];
+  $output_file = get_custom_image_path("logo.png");
+  
+  // reset option selected, return the default url
+  if ($_POST["reset_application_logo"])
+  return get_default_image_url("logo.png");
+  
+  // no upload, return the old file url
+  if (empty($input_file))
+  return get_logo_url();
+  
+  // not an image, return the old file url
+  $mime = getimagesize($input_file)["mime"];
+  if ($mime != "image/jpeg" && $mime != "image/jpg" && $mime != "image/png") {
+    add_settings_error("application_logo_path", 1, "Invalid mime type.");
+    return get_logo_url();
+  }
+  
+  // prepare images and return the new url
+  $image_editor = wp_get_image_editor($input_file);
+  $image_editor->save($output_file);
+  return get_custom_image_url("logo.png");
 }
 
 /* register the functions */
@@ -126,9 +164,11 @@ function init_theme_settings_fields() {
   );
 
   add_settings_field("application_icon_path", "Application icon", "display_application_icon_setting", "theme-settings", "section");
+  add_settings_field("application_logo_path", "Application logo", "display_application_logo_setting", "theme-settings", "section");
   
   register_setting("section", "colored_header");
   register_setting("section", "application_icon_path", "application_icon_upload_handler");
+  register_setting("section", "application_logo_path", "application_logo_upload_handler");
 }
 
 add_action("admin_init", "init_theme_settings_fields");
