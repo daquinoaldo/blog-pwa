@@ -6,7 +6,7 @@ const search = {
 
 // search input
 search.input = document.createElement("input")
-search.input.type = "text"
+search.input.type = "search"
 search.input.id = "search"
 search.input.placeholder = "Search..."
 search.input.oninput = () => search.filter(search.input.value)
