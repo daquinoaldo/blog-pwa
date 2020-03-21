@@ -27,15 +27,8 @@ search.getContent = function() {
 
 /**
  * Set the list of items that matches the query.
- * @param ul List of item to be set as content.
+ * @param post Array of post to be set in the list as content.
  */
-search.setList = function(ul) {
-  if (search.ul)
-    search.div.removeChild(search.ul)
-  search.div.appendChild(ul)
-  search.ul = ul
-}
-
 search.setList = function(posts) {
   // prepare new list
   const ul = document.createElement("ul")
