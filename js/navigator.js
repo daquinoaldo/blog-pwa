@@ -1,3 +1,5 @@
+const cp = new ContentProvider()
+
 const nav = {
   isLoading: false,
   container: document.getElementById("container"),
@@ -93,7 +95,7 @@ nav.navigate = function (url, title, scrollTop = 0) {
   else if (url === "/more")
     nav.setContent(cp.more(), scrollTop)
   else { // it's a post
-    const slug = url
+    const slug = url.replace(/\//g, "")
     cp.post(slug).then(content => nav.setContent(content, slug, scrollTop))
     nav.show(nav.arrowBack)  // show the back arrow button
   }

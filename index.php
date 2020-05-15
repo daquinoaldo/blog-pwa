@@ -78,10 +78,10 @@
       </noscript>
     </main>
 
-    <script src="<?php bloginfo('template_url') ?>/js/content-provider.js"></script>
-    <script src="<?php bloginfo('template_url') ?>/js/navigator.js"></script>
-    <script src="<?php bloginfo('template_url') ?>/js/search.js"></script>
-    <script src="<?php bloginfo('template_url') ?>/js/wordpress.js"></script>
-    <script src="<?php bloginfo('template_url') ?>/js/install-sw.js"></script>
+    <script defer src="<?php bloginfo('template_url') ?>/js/cache.js"></script>
+    <script defer src="<?php bloginfo('template_url') ?>/js/content-provider.js"></script>
+    <script defer src="<?php bloginfo('template_url') ?>/js/navigator.js"></script>
+    <script defer src="<?php bloginfo('template_url') ?>/js/search.js"></script>
+    <script defer src="<?php bloginfo('template_url') ?>/js/install-sw.js"></script>
   </body>
 </html>

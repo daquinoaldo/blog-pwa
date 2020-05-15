@@ -3,6 +3,10 @@ class Cache {
   api_endpoint = "/?rest_route=/simple-pwa/v1"
   collections = ["posts", "categories", "tags"]
 
+  constructor() {
+    this.checkForUpdates()
+  }
+
   async cacheAll() {
     localStorage.setItem("last-edit", await this.getLastEdit())
     await Promise.all(
@@ -12,7 +16,13 @@ class Cache {
           .then(items => this.putAll(collection, items))
       )
     )
-    console.log("Cache update. Ready to go offline.")
+  }
+
+  async clearAll() {
+    await this.connect()
+    for (let collection of this.collections)
+      if (this.db.objectStoreNames.contains(collection))
+        this.clear(collection)
   }
 
   async getLastEdit() {
@@ -21,8 +31,12 @@ class Cache {
   }
 
   async checkForUpdates() {
-    if (await this.getLastEdit() > localStorage.getItem("last-edit"))
-      return this.cacheAll
+    if (await this.getLastEdit() > localStorage.getItem("last-edit")) {
+      await this.clearAll()
+      await this.cacheAll()
+      console.log("Cache updated. Ready to go offline.")
+    }
+    else console.log("Cache up to date.") 
   }
 
   async connect() {
