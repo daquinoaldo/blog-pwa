@@ -44,7 +44,6 @@ class ContentProvider {
   }
 
   async post(slug) {
-    console.log(slug)
     const post = await this.cache.get("posts", slug)
     const div = document.createElement("div")
     div.className = "content"
@@ -53,59 +52,23 @@ class ContentProvider {
   }
 
   more() {
-    // Container
-    const div = document.createElement("div")
-    div.className = "content"
-    // About app
-    const t1 = document.createElement("h2")
-    t1.appendChild(document.createTextNode("Blog PWA"))
-    div.appendChild(t1)
-    const p1 = document.createElement("p")
-    p1.appendChild(document.createTextNode("This is a skeleton for a Progressive Web Application."))
-    div.appendChild(p1)
-    const p2 = document.createElement("p")
-    p2.appendChild(document.createTextNode("You can fork or clone it on "))
-    repo = document.createElement("a")
+    const repo = document.createElement("a")
     repo.href = "https://github.com/daquinoaldo/blog-pwa"
     repo.target = "_blank"
-    repo.appendChild(document.createTextNode("GitHub"))
-    p2.appendChild(repo)
-    p2.appendChild(document.createTextNode("."))
-    div.appendChild(p2)
-    // About me
-    const t2 = document.createElement("h2")
-    t2.appendChild(document.createTextNode("About me"))
-    div.appendChild(t2)
-    const p3 = document.createElement("p")
-    p3.appendChild(document.createTextNode("Hi! I'm Aldo D'Aquino."))
-    p3.appendChild(document.createElement("br"))
-    p3.appendChild(document.createTextNode("I’m a master degree student at Pisa University."))
-    div.appendChild(p3)
-    const p4 = document.createElement("p")
-    p4.appendChild(document.createTextNode("I program web applications for pleasure, I’m very good with Node.js and Docker."))
-    div.appendChild(p4)
-    const p5 = document.createElement("p")
-    p5.appendChild(document.createTextNode("I like finding out new things, trying new languages and discovering new technologies. I’ve participated to many hackathons and in my free time I like working on some open source projects."))
-    div.appendChild(p5)
-    const p6 = document.createElement("p")
-    p6.appendChild(document.createTextNode("Currently I’m interested in Progressive Web Applications, Python and Go."))
-    div.appendChild(p6)
-    // Bio link
-    const p8 = document.createElement("p")
-    p8.appendChild(document.createTextNode("You can find me on "))
-    gh = document.createElement("a")
-    gh.href = "https://github.com/daquinoaldo"
-    gh.target = "_blank"
-    gh.appendChild(document.createTextNode("GitHub"))
-    p8.appendChild(gh)
-    p8.appendChild(document.createTextNode(" and at "))
-    website = document.createElement("a")
+    repo.appendChild(document.createTextNode("Simple PWA"))
+    const website = document.createElement("a")
     website.href = "https://ald.ooo"
     website.target = "_blank"
-    website.appendChild(document.createTextNode("ald.ooo"))
-    p8.appendChild(website)
-    p8.appendChild(document.createTextNode("."))
-    div.appendChild(p8)
+    website.appendChild(document.createTextNode("Aldo D'Aquino"))
+    const p = document.createElement("p")
+    p.id = "copyright"
+    p.appendChild(repo)
+    p.appendChild(document.createTextNode(" by "))
+    p.appendChild(website)
+    const div = document.createElement("div")
+    div.className = "content"
+    div.appendChild(document.createElement("br"))
+    div.appendChild(p)
     return div
   }
 
