@@ -1,4 +1,5 @@
 const cp = new ContentProvider()
+const search = new Search()
 
 const nav = {
   isLoading: false,
@@ -66,7 +67,7 @@ nav.hide = elem => elem.style.display = "none"
  * @param url        URL of the content.
  * @param scrollTop  Distance in px from top (used when hit the back arrow)
  */
-nav.navigate = function (url, title, scrollTop = 0) {
+nav.navigate = async function (url, title, scrollTop = 0) {
   // prevent multiple loading of the same resource
   if (nav.isLoading) return
   nav.isLoading = true
@@ -89,7 +90,7 @@ nav.navigate = function (url, title, scrollTop = 0) {
     cp.posts(undefined, tag).then(content => nav.setContent(content, scrollTop))
   }
   else if (url === "/search") {
-    nav.setContent(search.getContent(), scrollTop)
+    nav.setContent(await search.getContent(), scrollTop)
     search.input.focus()
   }
   else if (url === "/more")
