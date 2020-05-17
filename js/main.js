@@ -1,3 +1,5 @@
+const nav = new Navigator()
+
 // Install service worker
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/serviceWorker.js', { scope: '/' })

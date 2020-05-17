@@ -34,6 +34,7 @@ class Cache {
     if (await this.getLastEdit() > localStorage.getItem("last-edit")) {
       await this.clearAll()
       await this.cacheAll()
+      new Navigator().navigate(document.title)
       console.log("Cache updated. Ready to go offline.")
     }
     else console.log("Cache up to date.") 

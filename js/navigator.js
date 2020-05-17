@@ -121,5 +121,3 @@ class Navigator {
     }
   }
 }
-
-const nav = new Navigator()
