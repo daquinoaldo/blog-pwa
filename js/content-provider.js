@@ -21,7 +21,7 @@ class ContentProvider {
     const ul = document.createElement("ul")
     ul.className = "list"
     for (let i = 0; i < posts.length; i++)
-      ul.appendChild(cp.createListElement("/" + posts[i].slug, posts[i].title))
+      ul.appendChild(this.createListElement("/" + posts[i].slug, posts[i].title))
     return ul
   }
 
@@ -30,7 +30,7 @@ class ContentProvider {
     const ul = document.createElement("ul")
     ul.className = "list"
     for (let category of categories)
-      ul.appendChild(cp.createListElement(`/categories/${category.slug}`, category.name))
+      ul.appendChild(this.createListElement(`/categories/${category.slug}`, category.name))
     return ul
   }
 
@@ -39,7 +39,7 @@ class ContentProvider {
     const ul = document.createElement("ul")
     ul.className = "list"
     for (let tag of tags)
-      ul.appendChild(cp.createListElement(`/tags/${tag.slug}`, tag.name))
+      ul.appendChild(this.createListElement(`/tags/${tag.slug}`, tag.name))
     return ul
   }
 

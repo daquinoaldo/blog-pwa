@@ -1,6 +1,8 @@
 class Search {
 
   cache = new Cache()
+  cp = new ContentProvider()
+  navigator = new Navigator()
   posts = null
   ul = null
 
@@ -29,13 +31,15 @@ class Search {
     const ul = document.createElement("ul")
     ul.className = "list"
     for (let post of posts)
-      ul.appendChild(cp.createListElement("/posts/" + post.slug, post.title))
+      ul.appendChild(this.cp.createListElement("/" + post.slug, post.title))
     // remove previous items
     if (this.ul)
       this.div.removeChild(this.ul)
     // prepare add new list
     this.div.appendChild(ul)
     this.ul = ul
+    // callback
+    this.navigator.setupInternal()
   }
 
   filter(input) {

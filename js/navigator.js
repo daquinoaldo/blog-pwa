@@ -1,119 +1,125 @@
-const cp = new ContentProvider()
-const search = new Search()
 
-const nav = {
-  isLoading: false,
-  container: document.getElementById("container"),
-  arrowBack: document.getElementById("arrow-back"),
-  loading: document.getElementById("loading")
-}
+class Navigator {
 
-/**
- * Empty the container from every content.
- */
-nav.emptyContent = function () {
-  // show the loading panel, will stop in setContent()
-  nav.show(nav.loading)
-  // remove all children
-  while (nav.container.firstChild)
-    nav.container.removeChild(nav.container.firstChild)
-  // reset the back arrow button
-  nav.hide(nav.arrowBack)
-}
+  cp = new ContentProvider()
 
-/**
- * Set the specified content inside the container.
- * @param content  DOM node with the new content.
- */
-nav.setContent = function (content, scrollTop = 0) {
-  nav.container.appendChild(content)
-  window.scrollTo(0, scrollTop)
-  nav.setupInternal()
-  nav.hide(nav.loading)  // page ready, hide the loading panel
-  nav.isLoading = false
-}
+  isLoading = false
 
-/**
-* Override the behaviour of the elements with class "internal".
-* This element are a element with the href field, but when clicked
-* will not navigate to the link externally.
-* Instead, the app content will be replaced by the load page function.
-*/
-nav.setupInternal = function () {
-  let internalLinks = document.getElementsByClassName("internal")
-  //const internalLinks = document.getElementsByTagName("a")
-  for (let i = 0; i < internalLinks.length; i++)
-    internalLinks[i].onclick = e => {
-      e.preventDefault()
-      const title = internalLinks[i].textContent
-      const href = internalLinks[i].getAttribute("href")
-      const scrollTop = document.getElementsByTagName("html")[0].scrollTop
-      const pageTitle = document.title
-      const state = { scrollTop: scrollTop, title: pageTitle }
-      history.replaceState(state, "", window.location.href)
-      history.pushState(null, "", href)
-      nav.navigate(href, title)
+  container = document.getElementById("container")
+  arrowBack = document.getElementById("arrow-back")
+  loading = document.getElementById("loading")
+
+  constructor() {
+    // load current page when everything is load (otherwise js will missing)
+    document.addEventListener('readystatechange', async e => {
+      if (e.target.readyState === "complete") {
+        // save the site title
+        this.siteTitle = document.title
+        // navigate to the page
+        await this.navigate()
+        // hide the arrow (since we don't came from inside the application)
+        this.hide(this.arrowBack)
+      }
+    })
+    // implement back action on history
+    window.onpopstate = e => this.navigate(e?.state?.title, e?.state?.scrollTop)
+  }
+
+  // toggle display property of elements
+  show = elem => elem.style.display = "block"
+  hide = elem => elem.style.display = "none"
+
+  // clear the content
+  emptyContent() {
+    // show the loading panel, will stop in setContent()
+    this.show(this.loading)
+    // remove all children
+    while (this.container.firstChild)
+      this.container.removeChild(this.container.firstChild)
+    // reset the back arrow button (i.e. hide it)
+    this.hide(this.arrowBack)
+  }
+
+  // setup .internal links to be handled by this navigator instead of firing a page load
+  setupInternal() {
+    const internalLinks = document.getElementsByClassName("internal")
+    for (let link of internalLinks)
+      link.onclick = e => {
+        e.preventDefault()
+        // save the current page and scroll in the history
+        const state = {
+          scrollTop: document.getElementsByTagName("html")[0].scrollTop,
+          title: document.title
+        }
+        // add the current page to the history
+        history.replaceState(state, "", window.location.href)
+        // move to the new page
+        history.pushState(null, link.textContent, link.href)
+        // navigate to the new page
+        this.navigate(link.textContent)
+      }
+  }
+
+  // set a new content
+  setContent(content, scrollTop = 0) {
+    this.container.appendChild(content)
+    window.scrollTo(0, scrollTop)
+    this.setupInternal()     // setup internal links
+    this.hide(this.loading)  // page ready, hide the loading panel
+    this.isLoading = false   // exit from loading state
+  }
+
+  // navigate, i.e. prepare and set the content basing on the url
+  async navigate(title, scrollTop = 0) {
+    // prevent multiple loading of the same resource
+    if (this.isLoading) return
+    this.isLoading = true
+    // set page title
+    document.title = (title || "") + (title && this.siteTitle ? " | " : "") + this.siteTitle
+    // empty the page
+    this.emptyContent()
+    // load and set the new content
+    const url = window.location.pathname
+    if (url === "/") {
+      const content = await this.cp.posts()
+      this.setContent(content, scrollTop)
     }
-}
-
-/**
- * Toggle the back arrow button and the loading spinner.
- */
-nav.show = elem => elem.style.display = "block"
-nav.hide = elem => elem.style.display = "none"
-
-/**
- * Show the content specified in the URL.
- * @param url        URL of the content.
- * @param scrollTop  Distance in px from top (used when hit the back arrow)
- */
-nav.navigate = async function (url, title, scrollTop = 0) {
-  // prevent multiple loading of the same resource
-  if (nav.isLoading) return
-  nav.isLoading = true
-  // set page title
-  document.title = (title || "") + (title && nav.siteTitle ? " | " : "") + nav.siteTitle
-  // empty the page, then load and set the new content
-  nav.emptyContent()
-  if (url === "/")
-    cp.posts().then(content => nav.setContent(content, scrollTop))
-  else if (url === "/categories")
-    cp.categories().then(content => nav.setContent(content, scrollTop))
-  else if (url.includes("/categories/")) {
-    const category = url.replace("/categories/", "")
-    cp.posts(category).then(content => nav.setContent(content, scrollTop))
-  }
-  else if (url === "/tags")
-    cp.tags().then(content => nav.setContent(content, scrollTop))
-  else if (url.includes("/tags/")) {
-    const tag = url.replace("/tags/", "")
-    cp.posts(undefined, tag).then(content => nav.setContent(content, scrollTop))
-  }
-  else if (url === "/search") {
-    nav.setContent(await search.getContent(), scrollTop)
-    search.input.focus()
-  }
-  else if (url === "/more")
-    nav.setContent(cp.more(), scrollTop)
-  else { // it's a post
-    const slug = url.replace(/\//g, "")
-    cp.post(slug).then(content => nav.setContent(content, slug, scrollTop))
-    nav.show(nav.arrowBack)  // show the back arrow button
+    else if (url === "/categories") {
+      const content = await this.cp.categories()
+      this.setContent(content, scrollTop)
+    }
+    else if (url.includes("/categories/")) {
+      const category = url.replace("/categories/", "")
+      const content = await this.cp.posts(category)
+      this.show(this.arrowBack)
+      this.setContent(content, scrollTop)  // FIXME
+    }
+    else if (url === "/tags") {
+      const content = await this.cp.tags()
+      this.setContent(content, scrollTop)
+    }
+    else if (url.includes("/tags/")) {
+      const tag = url.replace("/tags/", "")
+      const content = await this.cp.posts(undefined, tag)
+      this.setContent(content, scrollTop)
+    }
+    else if (url === "/search") {
+      const search = new Search()
+      const content = await search.getContent()
+      this.setContent(content, scrollTop)
+      search.input.focus()
+    }
+    else if (url === "/more") {
+      const content = this.cp.more()
+      this.setContent(content, scrollTop)
+    }
+    else { // it's a post
+      const slug = url.replace(/\//g, "")
+      const content = await this.cp.post(slug)
+      this.show(this.arrowBack)
+      this.setContent(content, scrollTop) // FIXME
+    }
   }
 }
 
-// Load current page when everything is load (otherwise js will missing)
-document.addEventListener('readystatechange', e => {
-  if (e.target.readyState === "complete") {
-    nav.siteTitle = document.title
-    nav.navigate(window.location.pathname)
-  }
-})
-
-// Implement back action on history
-window.onpopstate = e =>
-  nav.navigate(
-    window.location.pathname,
-    e && e.state ? e.state.title : null,
-    e && e.state ? e.state.scrollTop : null
-  )
+const nav = new Navigator()
