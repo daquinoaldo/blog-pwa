@@ -22,6 +22,9 @@ function get_logo_url() {
 function get_colored_header() {
   return get_option("colored_header", "#0288d1");
 }
+function get_application_version() {
+  return get_option("application_version", "1.0.0");
+}
 
 
 /* == SETTINGS PAGE ========== */
@@ -54,9 +57,7 @@ function init_theme_settings_page() {
 add_action("admin_menu", "init_theme_settings_page");
 
 
-/* == SETTINGS FIELDS ========== */
-
-/* display functions */
+/* == DISPLAY SETTINGS ========== */
 function display_colored_header_setting()  {
   ?>
     <input type="text" name="colored_header" id="colored_header" class="color-picker" value="<?php echo get_colored_header() ?>" />
@@ -88,7 +89,20 @@ function display_application_logo_setting() {
   <?php
 }
 
-/* handler functions */
+function display_application_version()  {
+  // this inject a hidden input with the next app version
+  // when settings are saved the app version is incremented
+  // i.e. 1.0.0 will become 1.0.1, and so on
+  $application_version = get_application_version();
+  $list = explode(".", $application_version);
+  $list[2]++;
+  $new_application_version = implode(".", $list)
+  ?>
+    <input type="hidden" name="application_version" id="application_version" value="<?php echo $new_application_version ?>"/>
+  <?php
+}
+
+/* == SETTINGS HANDLERS ========== */
 function application_icon_upload_handler($options) {
   $input_file = $_FILES["application_icon"]["tmp_name"];
   $output_dir = get_custom_image_path("icons/");
@@ -151,7 +165,7 @@ function application_logo_upload_handler($options) {
   return get_custom_image_url("logo.png");
 }
 
-/* register the functions */
+/* == REGISTER FUNCTIONS ========== */
 function init_theme_settings_fields() {
   add_settings_section("section", "All Settings", null, "theme-settings");
 
@@ -162,13 +176,14 @@ function init_theme_settings_fields() {
     "theme-settings",                   // page
     "section"                           // section
   );
-
   add_settings_field("application_icon_path", "Application icon", "display_application_icon_setting", "theme-settings", "section");
   add_settings_field("application_logo_path", "Application logo", "display_application_logo_setting", "theme-settings", "section");
+  add_settings_field("application_version", "", "display_application_version", "theme-settings", "section");
   
   register_setting("section", "colored_header");
   register_setting("section", "application_icon_path", "application_icon_upload_handler");
   register_setting("section", "application_logo_path", "application_logo_upload_handler");
+  register_setting("section", "application_version");
 }
 
 add_action("admin_init", "init_theme_settings_fields");

@@ -1,4 +1,5 @@
 const serverRoot = typeof SERVER_ROOT != "undefined" ? SERVER_ROOT : ""
+const cacheName = typeof CACHE_NAME != "undefined" ? CACHE_NAME : "v1.0.0"
 
 // files to be cached
 const files = [
@@ -27,8 +28,6 @@ const files = [
   `${serverRoot}/js/search.js`,
   `/manifest.json`
 ]
-
-const cacheName = "v1.0.0-alpha"
 
 // listen for install event and cache all files
 self.addEventListener("install", event => {
