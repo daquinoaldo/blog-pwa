@@ -31,7 +31,7 @@ function get_application_version() {
 function theme_settings_page() {
   ?>
     <div class="wrap">
-      <h1>Theme Panel</h1>
+      <h1>Simple PWA</h1>
       <?php settings_errors(); ?>
       <form method="post" enctype="multipart/form-data" action="options.php">
         <?php
@@ -76,7 +76,7 @@ function display_application_icon_setting() {
     <img width="180" src="<?php echo get_icon_url("msapplication-tile.png") ?>">
     <br><br>
     <input type="file" name="application_icon" id="application_icon" />
-    <input type="checkbox" name="reset_application_icon" id="reset_application_icon" />Reset to default icon
+    <input type="checkbox" name="reset_application_icon" id="reset_application_icon" />Reset
   <?php
 }
 
@@ -85,7 +85,7 @@ function display_application_logo_setting() {
     <img width="180" src="<?php echo get_logo_url() ?>">
     <br><br>
     <input type="file" name="application_logo" id="application_logo" />
-    <input type="checkbox" name="reset_application_logo" id="reset_application_logo" />Reset to default logo
+    <input type="checkbox" name="reset_application_logo" id="reset_application_logo" />Reset
   <?php
 }
 
@@ -167,17 +167,17 @@ function application_logo_upload_handler($options) {
 
 /* == REGISTER FUNCTIONS ========== */
 function init_theme_settings_fields() {
-  add_settings_section("section", "All Settings", null, "theme-settings");
+  add_settings_section("section", __("Settings", "simple-pwa"), null, "theme-settings");
 
   add_settings_field(
-    "colored_header",                   // slug
-    "Colored header",                   // title
-    "display_colored_header_setting",   // callback
-    "theme-settings",                   // page
-    "section"                           // section
+    "colored_header",                        // slug
+    __("Application color", "simple-pwa"),   // title
+    "display_colored_header_setting",        // callback
+    "theme-settings",                        // page
+    "section"                                // section
   );
-  add_settings_field("application_icon_path", "Application icon", "display_application_icon_setting", "theme-settings", "section");
-  add_settings_field("application_logo_path", "Application logo", "display_application_logo_setting", "theme-settings", "section");
+  add_settings_field("application_icon_path", __("Icon", "simple-pwa"), "display_application_icon_setting", "theme-settings", "section");
+  add_settings_field("application_logo_path", __("Logo", "simple-pwa"), "display_application_logo_setting", "theme-settings", "section");
   add_settings_field("application_version", "", "display_application_version", "theme-settings", "section");
   
   register_setting("section", "colored_header");

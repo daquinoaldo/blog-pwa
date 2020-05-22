@@ -47,25 +47,25 @@
         <li>
           <a class="internal" href="/categories">
             <img alt="categories" src="<?php bloginfo('template_url') ?>/images/nav/categories.svg">
-            <span>Categories</span>
+            <span><?php _e('Categories','simple-pwa'); ?></span>
           </a>
         </li>
         <li>
           <a class="internal" href="/search">
             <img alt="search" src="<?php bloginfo('template_url') ?>/images/nav/search.svg">
-            <span>Search</span>
+            <span><?php _e('Search','simple-pwa'); ?></span>
           </a>
         </li>
         <li>
           <a class="internal" href="/tags">
             <img alt="tags" src="<?php bloginfo('template_url') ?>/images/nav/tags.svg">
-            <span>Tags</span>
+            <span><?php _e('Tags','simple-pwa'); ?></span>
           </a>
         </li>
         <li>
           <a class="internal" href="/more">
             <img alt="more" src="<?php bloginfo('template_url') ?>/images/nav/more.svg">
-            <span>More</span>
+            <span><?php _e('More','simple-pwa'); ?></span>
           </a>
         </li>
       </ul>
@@ -75,8 +75,9 @@
 
     <main id="container">
       <noscript>
-        This site requires JavaScript.
-        <a href="https://www.enable-javascript.com/" target="_blank">Here</a> you can find how to enable it in your browser.
+      <?php _e('This site requires JavaScript.','simple-pwa'); ?>
+      <a href="https://www.enable-javascript.com/" target="_blank"><?php _e('Here','simple-pwa'); ?></a>
+      <?php _e('you can find how to enable it in your browser.','simple-pwa'); ?>
       </noscript>
     </main>
 
