@@ -73,6 +73,7 @@ self.addEventListener('fetch', event => {
   if (
     event.request.url.includes("/wp-admin") ||
     event.request.url.includes("/wp-login") ||
+    event.request.url.includes("/wp-json") ||
     event.request.url.includes("?rest_route=") ||
     event.request.url.includes("/service-worker.js")
   ) return console.log(`${event.request.url} skipped.`)
