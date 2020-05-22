@@ -1,3 +1,5 @@
+<?php require_once(get_template_directory() . "/pwa-handler.php") ?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>

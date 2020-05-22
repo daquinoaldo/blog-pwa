@@ -92,7 +92,6 @@ add_action("rest_api_init", function() {
     "methods" => "GET",
     "callback" => "get_all_categories"
   ));
-
   register_rest_route("simple-pwa/v1", "/tags", array(
     "methods" => "GET",
     "callback" => "get_all_tags"
