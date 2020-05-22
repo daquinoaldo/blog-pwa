@@ -8,7 +8,7 @@ function get_default_image_path($filename = "") {
   return get_template_directory() . "/images/" . $filename;
 }
 function get_custom_image_url($filename = "") {
-  return "/wp-content/uploads/blog-pwa/images/" . $filename;
+  return "/wp-content/uploads/simple-pwa/images/" . $filename;
 }
 function get_custom_image_path($filename = "") {
   return $_SERVER["DOCUMENT_ROOT"] . get_custom_image_url($filename);
