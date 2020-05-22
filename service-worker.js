@@ -25,7 +25,7 @@ const files = [
   `${serverRoot}/js/main.js`,
   `${serverRoot}/js/navigator.js`,
   `${serverRoot}/js/search.js`,
-  //`${serverRoot}/manifest.json`
+  `/manifest.json`
 ]
 
 const cacheName = "v1.0.0-alpha"
@@ -74,6 +74,7 @@ self.addEventListener('fetch', event => {
   if (
     event.request.url.includes("/wp-admin") ||
     event.request.url.includes("/wp-login") ||
+    event.request.url.includes("?rest_route=") ||
     event.request.url.includes("/service-worker.js")
   ) return console.log(`${event.request.url} skipped.`)
   // Else check in cache for matching

@@ -4,11 +4,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title><?php bloginfo('name') ?></title><!-- update me also in the manifest -->
-    <meta name="Description" content="<?php bloginfo('description') ?>"><!-- update me also in the manifest -->
+    <title><?php bloginfo('name') ?></title>
+    <meta name="Description" content="<?php bloginfo('description') ?>">
     <meta http-equiv=X-UA-Compatible content="IE=edge">
     <meta name=viewport content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="<?php echo get_colored_header() ?>"><!-- update me also in the manifest -->
+    <meta name="theme-color" content="<?php echo get_colored_header() ?>">
     <meta name="msapplication-TileColor" content="<?php echo get_colored_header() ?>">
     <meta name="msapplication-TileImage" content="<?php echo get_icon_url("msapplication-tile") ?>">
     <meta name="mobile-web-app-capable" content="yes">
@@ -21,7 +21,7 @@
     <link rel="icon" type="image/png" href="<?php echo get_icon_url("favicon-48x48.png") ?>" sizes="48x48">
     <link rel="icon" type="image/png" href="<?php echo get_icon_url("favicon-32x32.png") ?>" sizes="32x32">
     <link rel="icon" type="image/png" href="<?php echo get_icon_url("favicon-16x16.png") ?>" sizes="16x16">
-    <link rel="manifest" href="<?php bloginfo('template_url') ?>/manifest.json">
+    <link rel="manifest" href="/manifest.json">
     <link rel="stylesheet" href="<?php bloginfo('template_url') ?>/css/style.css">
     <link rel="stylesheet" href="<?php bloginfo('template_url') ?>/css/loading.css">
   </head>
