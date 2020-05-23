@@ -1,4 +1,3 @@
-
 class Navigator {
 
   cp = new ContentProvider()
@@ -60,6 +59,20 @@ class Navigator {
       }
   }
 
+  // if the content contains script tags, evaluate them
+  evaluateScripts() {
+    const scripts = this.container.getElementsByTagName("script")
+    for (let script of scripts) {
+      if (script.text && script.text != "")
+        eval(script.text)
+      if (script.src && script.src != "") {
+        fetch(script.src)
+          .then(res => res.text())
+          .then(content => eval(content))
+      }
+    }
+  }
+
   // set a new content
   setContent(content, scrollTop = 0) {
     this.container.appendChild(content)
@@ -92,7 +105,7 @@ class Navigator {
       const category = url.replace("/categories/", "")
       const content = await this.cp.posts(category)
       this.show(this.arrowBack)
-      this.setContent(content, scrollTop)  // FIXME
+      this.setContent(content, scrollTop)
     }
     else if (url === "/tags") {
       const content = await this.cp.tags()
@@ -117,7 +130,8 @@ class Navigator {
       const slug = url.replace(/\//g, "")
       const content = await this.cp.post(slug)
       this.show(this.arrowBack)
-      this.setContent(content, scrollTop) // FIXME
+      this.setContent(content, scrollTop)
     }
+    this.evaluateScripts()
   }
 }
