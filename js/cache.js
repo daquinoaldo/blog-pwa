@@ -82,8 +82,8 @@ class Cache {
       request.onerror = event => reject(event.target.error)
     })
   }
-
-  async getAll(collection) {
+  
+  async getAll(collection, sortFun = (a, b) => a.title.localeCompare(b.title)) {
     await this.connect()
     return new Promise((resolve, reject) => {
       const request = this.db.transaction([collection], "readwrite")
@@ -92,6 +92,7 @@ class Cache {
       request.onsuccess = event => resolve(event.target.result)
       request.onerror = event => reject(event.target.error)
     })
+    .then(res => { res.sort(sortFun); console.log(res); return res })
   }
 
   async clear(collection, key) {
