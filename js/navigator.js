@@ -93,40 +93,40 @@ class Navigator {
     this.emptyContent()
     // load and set the new content
     const url = window.location.pathname
-    if (url === "/") {
+    if (url === "/") { // home = posts list
       const content = await this.cp.posts()
       this.setContent(content, scrollTop)
     }
-    else if (url === "/categories") {
+    else if (url === "/categories") { // categories list
       const content = await this.cp.categories()
       this.setContent(content, scrollTop)
     }
-    else if (url.includes("/categories/")) {
+    else if (url.includes("/categories/")) { // posts list in category
       const category = url.replace("/categories/", "")
       const content = await this.cp.posts(category)
       this.show(this.arrowBack)
       this.setContent(content, scrollTop)
     }
-    else if (url === "/tags") {
+    else if (url === "/tags") { // tags list
       const content = await this.cp.tags()
       this.setContent(content, scrollTop)
     }
-    else if (url.includes("/tags/")) {
+    else if (url.includes("/tags/")) {  // posts list in tag
       const tag = url.replace("/tags/", "")
       const content = await this.cp.posts(undefined, tag)
       this.setContent(content, scrollTop)
     }
-    else if (url === "/search") {
+    else if (url === "/search") { // search
       const search = new Search()
       const content = await search.getContent()
       this.setContent(content, scrollTop)
       search.input.focus()
     }
-    else if (url === "/more") {
-      const content = this.cp.more()
+    else if (url === "/more") { // the more section
+      const content = await this.cp.more()
       this.setContent(content, scrollTop)
     }
-    else { // it's a post
+    else { // post or page: the cp.post function handles both of them
       const slug = url.replace(/\//g, "")
       const content = await this.cp.post(slug)
       this.show(this.arrowBack)

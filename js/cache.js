@@ -1,7 +1,7 @@
 class Cache {
 
   api_endpoint = "/?rest_route=/simple-pwa/v1"
-  collections = ["posts", "categories", "tags"]
+  collections = ["posts", "categories", "tags", "pages"]
 
   constructor() {
     this.checkForUpdates()
@@ -45,7 +45,7 @@ class Cache {
       // If already opened, return
       if (this.db) resolve()
       // Open db
-      const request = indexedDB.open("simple-pwa")
+      const request = indexedDB.open("simple-pwa", 1)
       request.onerror = event => reject("Access denied to database")
       request.onsuccess = event => {
         this.db = event.target.result
@@ -92,7 +92,7 @@ class Cache {
       request.onsuccess = event => resolve(event.target.result)
       request.onerror = event => reject(event.target.error)
     })
-    .then(res => { res.sort(sortFun); console.log(res); return res })
+    .then(res => { res.sort(sortFun); return res })
   }
 
   async clear(collection, key) {

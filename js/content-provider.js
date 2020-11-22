@@ -20,8 +20,8 @@ class ContentProvider {
     // create ul element
     const ul = document.createElement("ul")
     ul.className = "list"
-    for (let i = 0; i < posts.length; i++)
-      ul.appendChild(this.createListElement("/" + posts[i].slug, posts[i].title))
+    for (let post of posts)
+      ul.appendChild(this.createListElement(`/${post.slug}`, post.title))
     return ul
   }
 
@@ -43,8 +43,17 @@ class ContentProvider {
     return ul
   }
 
+  async pages() {
+    const pages = await this.cache.getAll("pages")
+    const ul = document.createElement("ul")
+    ul.className = "list"
+    for (let page of pages)
+      ul.appendChild(this.createListElement(`/${page.slug}`, page.title))
+    return ul
+  }
+
   async post(slug) {
-    const post = await this.cache.get("posts", slug)
+    const post = await this.cache.get("posts", slug) || await this.cache.get("pages", slug)
     const h1 = document.createElement("h1")
     h1.innerText = post.title
     const div = document.createElement("div")
@@ -54,24 +63,30 @@ class ContentProvider {
     return div
   }
 
-  more() {
+  copyright() {
+    const wordpress = document.createElement("a")
+    wordpress.href = "https://wordpress.org/"
+    wordpress.target = "_blank"
+    wordpress.appendChild(document.createTextNode("Wordpress"))
     const repo = document.createElement("a")
     repo.href = "https://github.com/daquinoaldo/blog-pwa"
     repo.target = "_blank"
     repo.appendChild(document.createTextNode("Simple PWA"))
-    const website = document.createElement("a")
-    website.href = "https://ald.ooo"
-    website.target = "_blank"
-    website.appendChild(document.createTextNode("Aldo D'Aquino"))
     const p = document.createElement("p")
     p.id = "copyright"
+    p.appendChild(document.createTextNode("Powered by "))
+    p.appendChild(wordpress)
+    p.appendChild(document.createTextNode(" and "))
     p.appendChild(repo)
-    p.appendChild(document.createTextNode(" by "))
-    p.appendChild(website)
+    return p
+  }
+
+  async more() {
     const div = document.createElement("div")
     div.className = "content"
+    div.appendChild(await this.pages())
     div.appendChild(document.createElement("br"))
-    div.appendChild(p)
+    div.appendChild(this.copyright())
     return div
   }
 

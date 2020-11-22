@@ -45,6 +45,27 @@ function get_all_posts() {
   return $posts;
 }
 
+// ROUTE /pages
+function get_all_pages() {
+  // get the pages
+  $pages = get_pages(array(
+    "numberpages" => -1,
+    "orderby"    => "title",
+    "sort_order" => "asc"
+  ));
+
+  // remove unused fields
+  $pages = array_map(function ($page) {
+    return (object) [
+      "slug" => $page->post_name,
+      "title" => $page->post_title,
+      "content" => do_shortcode($page->post_content)
+    ];
+  }, $pages);
+
+  return $pages;
+}
+
 // ROUTE /categories
 function get_all_categories() {
   // get the categories
@@ -80,19 +101,24 @@ function get_all_tags() {
 
 // Register routes
 add_action("rest_api_init", function() {
-  register_rest_route("simple-pwa/v1", "/last-edit", array(
+  $base_url = "simple-pwa/v1";
+  register_rest_route($base_url, "/last-edit", array(
     "methods" => "GET",
     "callback" => "get_last_edit"
   ));
-  register_rest_route("simple-pwa/v1", "/posts", array(
+  register_rest_route($base_url, "/posts", array(
     "methods" => "GET",
     "callback" => "get_all_posts"
   ));
-  register_rest_route("simple-pwa/v1", "/categories", array(
+  register_rest_route($base_url, "/pages", array(
+    "methods" => "GET",
+    "callback" => "get_all_pages"
+  ));
+  register_rest_route($base_url, "/categories", array(
     "methods" => "GET",
     "callback" => "get_all_categories"
   ));
-  register_rest_route("simple-pwa/v1", "/tags", array(
+  register_rest_route($base_url, "/tags", array(
     "methods" => "GET",
     "callback" => "get_all_tags"
   ));
