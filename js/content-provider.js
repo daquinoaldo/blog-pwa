@@ -13,8 +13,9 @@ class ContentProvider {
   }
 
   async posts(category, tag) {
-    // get and optionally filter the posts
+    // get, sort and optionally filter the posts
     let posts = await this.cache.getAll("posts")
+    posts.sort((a, b) => a.title.localeCompare(b.title))
     if (category) posts = posts.filter(post => post.categories.includes(category))
     if (tag) posts = posts.filter(post => post.tags.includes(tag))
     // create ul element
@@ -27,6 +28,7 @@ class ContentProvider {
 
   async categories() {
     const categories = await this.cache.getAll("categories")
+    categories.sort((a, b) => a.name.localeCompare(b.name))
     const ul = document.createElement("ul")
     ul.className = "list"
     for (let category of categories)
@@ -36,6 +38,7 @@ class ContentProvider {
 
   async tags() {
     const tags = await this.cache.getAll("tags")
+    tags.sort((a, b) => a.name.localeCompare(b.name))
     const ul = document.createElement("ul")
     ul.className = "list"
     for (let tag of tags)
@@ -45,6 +48,7 @@ class ContentProvider {
 
   async pages() {
     const pages = await this.cache.getAll("pages")
+    pages.sort((a, b) => a.title.localeCompare(b.title))
     const ul = document.createElement("ul")
     ul.className = "list"
     for (let page of pages)

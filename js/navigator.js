@@ -88,7 +88,7 @@ class Navigator {
     if (this.isLoading) return
     this.isLoading = true
     // set page title
-    document.title = (title || "") + (title && this.siteTitle ? " | " : "") + this.siteTitle
+    document.title = (title || "") + (title && this.siteTitle ? " | " : "") + (this.siteTitle || "")
     // empty the page
     this.emptyContent()
     // load and set the new content
