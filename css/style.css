@@ -20,7 +20,9 @@ body {
   scroll-behavior: smooth;
 }
 
-h1, h2 {
+h1 {
+  text-align: center;
+  font-size: 1.5em;
   font-weight: 100;
 }
 
@@ -155,6 +157,7 @@ nav a {
   #container {
     margin-top: 5em;
     margin-bottom: 3.5em;
+    height: calc(100vh - 5em - 3.5em);
     overflow: scroll;
   }
 
@@ -195,6 +198,7 @@ nav a {
 
   #container {
     margin-top: 3.5em;
+    margin-bottom: 0;
     padding: 1em;
   }
 

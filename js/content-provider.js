@@ -45,9 +45,12 @@ class ContentProvider {
 
   async post(slug) {
     const post = await this.cache.get("posts", slug)
+    const h1 = document.createElement("h1")
+    h1.innerText = post.title
     const div = document.createElement("div")
     div.className = "content"
     div.innerHTML = post.content
+    div.prepend(h1)
     return div
   }
 
