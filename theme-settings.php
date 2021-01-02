@@ -23,7 +23,7 @@ function get_colored_header() {
   return get_option("colored_header", "#0288d1");
 }
 function get_application_version() {
-  return get_option("application_version", "1.0.0");
+  return get_option("application_version", "0.1.0");
 }
 
 

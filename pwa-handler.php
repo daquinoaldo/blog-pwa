@@ -1,4 +1,5 @@
 <?php
+  // GET service-worker.js
   if ($wp->request == "service-worker.js") {
     // prevent 404
     $wp_query->is_404 = false;
@@ -11,6 +12,7 @@
     exit;
   }
 
+  // GET manifest.json
   if ($wp->request == "manifest.json") {
     // prevent 404
     $wp_query->is_404 = false;
