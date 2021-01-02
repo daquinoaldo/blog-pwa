@@ -36,7 +36,7 @@ function get_all_posts() {
     return (object) [
       "slug" => $post->post_name,
       "title" => $post->post_title,
-      "content" => do_shortcode($post->post_content),
+      "content" => wpautop(do_shortcode($post->post_content)),
       "categories" => map_to_slug(get_the_category($post->ID)),
       "tags" => map_to_slug(get_the_tags($post->ID))
     ];
