@@ -24,6 +24,7 @@
   "description": "'.get_bloginfo("description").'",
   "version": "'.get_application_version().'",
   "scope": "/",
+  "start_url" : "/",
   "display": "standalone",
   "background_color": "'.get_colored_header().'",
   "theme_color": "'.get_colored_header().'",
