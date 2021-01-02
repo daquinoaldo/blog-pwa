@@ -7,7 +7,7 @@
     <title><?php bloginfo('name') ?></title>
     <meta name="Description" content="<?php bloginfo('description') ?>">
     <meta http-equiv=X-UA-Compatible content="IE=edge">
-    <meta name=viewport content="width=device-width, initial-scale=1">
+    <meta name=viewport content="viewport-fit=cover, width=device-width, initial-scale=1">
     <meta name="theme-color" content="<?php echo get_colored_header() ?>">
     <meta name="msapplication-TileColor" content="<?php echo get_colored_header() ?>">
     <meta name="msapplication-TileImage" content="<?php echo get_icon_url("msapplication-tile") ?>">
