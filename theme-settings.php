@@ -1,4 +1,5 @@
 <?php
+$APP_VERSION = "0.2.0";
 
 /* == CONFIGS & GETTERS ========== */
 function get_default_image_url($filename = "") {
@@ -23,7 +24,13 @@ function get_colored_header() {
   return get_option("colored_header", "#0288d1");
 }
 function get_application_version() {
-  return get_option("application_version", "0.1.0");
+  global $APP_VERSION;
+  $application_version = get_option("application_version", "0.1.0");
+  $list = explode(".", $application_version);
+  $LIST = explode(".", $APP_VERSION);
+  if ($LIST[0] > $list[0]) return $APP_VERSION;
+  if ($LIST[0] == $list[0] && $LIST[1] > $list[1]) return $APP_VERSION;
+  return $application_version;
 }
 
 
