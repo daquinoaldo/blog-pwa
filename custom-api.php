@@ -98,6 +98,36 @@ function get_all_tags() {
   return $tags;
 }
 
+// ROUTE /export
+function export() {
+  // get the posts
+  $posts = get_posts(array(
+    "numberposts" => -1,
+    "orderby"    => "title",
+    "sort_order" => "asc"
+  ));
+
+  // remove unused fields
+  $posts = array_map(function ($post) {
+    return (object) [
+      "slug" => $post->post_name,
+      "title" => $post->post_title,
+      //"content" => preg_replace('/\[showHide\](.*?)\[chords\]\\n/', '', wp_strip_all_tags(wpautop($post->post_content))),
+      "content" => preg_replace(
+        '/\[showHide\](.*?)\[chords\]\\n/s', '',
+        preg_replace(
+        '/\\n\[\/chords\](.*?)\[\/embed\]/s', '',
+        wp_strip_all_tags(wpautop($post->post_content))
+        )
+      ),
+      "categories" => map_to_slug(get_the_category($post->ID)),
+      "tags" => map_to_slug(get_the_tags($post->ID))
+    ];
+  }, $posts);
+
+  return $posts;
+}
+
 
 // Register routes
 add_action("rest_api_init", function() {
@@ -121,6 +151,10 @@ add_action("rest_api_init", function() {
   register_rest_route($base_url, "/tags", array(
     "methods" => "GET",
     "callback" => "get_all_tags"
+  ));
+  register_rest_route($base_url, "/export", array(
+    "methods" => "GET",
+    "callback" => "export"
   ));
 });
 
